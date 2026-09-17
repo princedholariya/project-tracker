@@ -1,0 +1,12 @@
+0 verbose cli /home/dev/.nvm/versions/node/v24.18.0/bin/node /home/dev/.nvm/versions/node/v24.18.0/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@11.16.0
+2 info using node@v24.18.0
+3 silly config load:file:/home/dev/.nvm/versions/node/v24.18.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/home/dev/Desktop/project-tracker/.npmrc
+5 silly config load:file:/home/dev/.nvm/versions/node/v24.18.0/etc/npmrc
+6 verbose title npm exec ng build
+7 verbose argv "exec" "--" "ng" "build"
+8 verbose logfile logs-max:10 dir:/home/dev/Desktop/project-tracker/.npm/_logs/2026-09-17T08_26_41_646Z-
+9 verbose logfile /home/dev/Desktop/project-tracker/.npm/_logs/2026-09-17T08_26_41_646Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly logfile done cleaning log files
