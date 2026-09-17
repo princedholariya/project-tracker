@@ -1,0 +1,97 @@
+<div class="projects-page">
+  <div class="projects-header">
+    <div class="header-titles">
+      <h1 class="page-title">Projects</h1>
+      <p class="page-subtitle" *ngIf="!(isLoading$ | async) && !(error$ | async)">
+        {{ (filteredProjects$ | async)?.length || 0 }} projects total
+      </p>
+      <p class="page-subtitle error-subtitle" *ngIf="!(isLoading$ | async) && (error$ | async)">
+        GET /todos · request failed
+      </p>
+    </div>
+    <div class="header-controls" *ngIf="!(error$ | async)">
+      <div class="search-box">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          [formControl]="searchControl"
+          placeholder="Search projects..."
+          class="search-input"
+        />
+        <button
+          *ngIf="searchControl.value"
+          class="clear-search"
+          (click)="searchControl.setValue('')">
+          ✕
+        </button>
+      </div>
+      <button type="button" class="btn btn-primary new-project-btn" (click)="openAddProjectModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New Project
+      </button>
+    </div>
+  </div>
+  <div *ngIf="isLoading$ | async" class="loading-state ledger-card">
+    <app-loading-spinner message="Deriving project list from DummyJSON todos metadata..."></app-loading-spinner>
+  </div>
+  <div *ngIf="error$ | async as errorMsg" class="ledger-card">
+    <app-error-alert
+      [isPageLevel]="true"
+      title="Failed to Load Projects"
+      [errorMessage]="errorMsg"
+      (retry)="loadData()">
+    </app-error-alert>
+  </div>
+  <ng-container *ngIf="!(isLoading$ | async) && !(error$ | async)">
+    <div *ngIf="(filteredProjects$ | async)?.length; else emptySearch" class="projects-grid">
+      <div
+        *ngFor="let project of filteredProjects$ | async"
+        class="project-card ledger-card"
+        [routerLink]="['/projects', project.id]">
+        <div class="card-top">
+          <h2 class="project-title">{{ project.name }}</h2>
+          <app-badge [label]="project.status" type="status"></app-badge>
+        </div>
+        <div class="task-count">{{ project.totalTasks }} tasks</div>
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-label">Progress</span>
+            <span class="progress-val">{{ project.progressPercentage }}%</span>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [ngClass]="project.progressPercentage === 100 ? 'green' : (project.progressPercentage === 0 ? 'gray' : 'blue')"
+              [style.width.%]="project.progressPercentage">
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="updated-time">{{ project.updatedAtText || 'Updated recently' }}</span>
+          <span class="done-ratio"><strong>{{ project.completedTasks }}/{{ project.totalTasks }}</strong> done</span>
+        </div>
+      </div>
+    </div>
+    <ng-template #emptySearch>
+      <div class="ledger-card empty-search-card">
+        <app-empty-state
+          title="No projects found"
+          subtitle="No projects match your search filter. Try clearing your search term."
+          actionText="Clear Search"
+          (actionClick)="searchControl.setValue('')">
+        </app-empty-state>
+      </div>
+    </ng-template>
+  </ng-container>
+  <app-add-project-modal
+    *ngIf="isAddProjectModalOpen"
+    (projectCreated)="onProjectCreated($event)"
+    (cancel)="closeAddProjectModal()">
+  </app-add-project-modal>
+</div>

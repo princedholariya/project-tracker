@@ -1,0 +1,145 @@
+<div class="dashboard-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Overview across all projects and tasks</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline new-project-btn" (click)="openAddProjectModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New Project
+      </button>
+    </div>
+  </div>
+  <div *ngIf="isLoading$ | async" class="loading-container ledger-card">
+    <app-loading-spinner message="Loading dashboard metrics from DummyJSON API..."></app-loading-spinner>
+  </div>
+  <div *ngIf="error$ | async as errorMsg" class="ledger-card">
+    <app-error-alert
+      [isPageLevel]="true"
+      title="Failed to Load Dashboard"
+      [errorMessage]="errorMsg"
+      (retry)="loadData()">
+    </app-error-alert>
+  </div>
+  <ng-container *ngIf="!(isLoading$ | async) && !(error$ | async)">
+    <ng-container *ngIf="stats$ | async as stats">
+      <div class="metrics-grid">
+        <div class="metric-card ledger-card">
+          <span class="metric-label">TOTAL PROJECTS</span>
+          <div class="metric-value">{{ stats.totalProjects }}</div>
+          <div class="metric-footnote green">
+            <span class="dot"></span>
+            <span>+2 this month</span>
+          </div>
+        </div>
+        <div class="metric-card ledger-card">
+          <span class="metric-label">TOTAL TASKS</span>
+          <div class="metric-value">{{ stats.totalTasks }}</div>
+          <div class="metric-footnote muted">
+            <span>Across all projects</span>
+          </div>
+        </div>
+        <div class="metric-card ledger-card">
+          <span class="metric-label">COMPLETED</span>
+          <div class="metric-value">{{ stats.completedTasks }}</div>
+          <div class="metric-footnote green">
+            <span class="dot"></span>
+            <span>{{ stats.completionRate }}% completion</span>
+          </div>
+        </div>
+        <div class="metric-card ledger-card">
+          <span class="metric-label">PENDING</span>
+          <div class="metric-value">{{ stats.pendingTasks }}</div>
+          <div class="metric-footnote red">
+            <span class="dot"></span>
+            <span>{{ stats.overdueTasks }} overdue</span>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="ledger-card section-card">
+          <h2 class="card-title">Tasks by status</h2>
+          <div class="status-bars">
+            <div class="status-bar-item">
+              <div class="bar-header">
+                <span class="bar-label">Not started</span>
+                <span class="bar-count">
+                  {{ stats.tasksByStatus.notStarted }}
+                  <span class="percent">({{ stats.tasksByStatus.notStartedPercent }}%)</span>
+                </span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill gray" [style.width.%]="stats.tasksByStatus.notStartedPercent"></div>
+              </div>
+            </div>
+            <div class="status-bar-item">
+              <div class="bar-header">
+                <span class="bar-label">In progress</span>
+                <span class="bar-count">
+                  {{ stats.tasksByStatus.inProgress }}
+                  <span class="percent">({{ stats.tasksByStatus.inProgressPercent }}%)</span>
+                </span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill blue" [style.width.%]="stats.tasksByStatus.inProgressPercent"></div>
+              </div>
+            </div>
+            <div class="status-bar-item">
+              <div class="bar-header">
+                <span class="bar-label">Completed</span>
+                <span class="bar-count">
+                  {{ stats.tasksByStatus.completed }}
+                  <span class="percent">({{ stats.tasksByStatus.completedPercent }}%)</span>
+                </span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill green" [style.width.%]="stats.tasksByStatus.completedPercent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ledger-card section-card">
+          <div class="card-header-flex">
+            <h2 class="card-title">Projects snapshot</h2>
+            <a routerLink="/projects" class="link-action">
+              View all projects
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+          <div class="snapshot-list">
+            <div
+              *ngFor="let p of stats.projectsSnapshot"
+              class="snapshot-item"
+              [routerLink]="['/projects', p.id]"
+              title="Open {{ p.name }}">
+              <span class="project-name">{{ p.name }}</span>
+              <div class="snapshot-progress-area">
+                <div class="progress-track sm">
+                  <div
+                    class="progress-fill"
+                    [ngClass]="getSnapshotProgressColor(p)"
+                    [style.width.%]="p.progressPercentage">
+                  </div>
+                </div>
+                <span class="progress-text">{{ p.progressPercentage }}%</span>
+                <span class="ratio-text">{{ p.completedTasks }}/{{ p.totalTasks }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+  <app-add-project-modal
+    *ngIf="isAddProjectModalOpen"
+    (projectCreated)="onProjectCreated($event)"
+    (cancel)="closeAddProjectModal()">
+  </app-add-project-modal>
+</div>
