@@ -1,0 +1,107 @@
+<div class="project-detail-page">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/projects" class="crumb-link">Projects</a>
+    <span class="crumb-separator">/</span>
+    <span class="crumb-current">{{ projectTitle }}</span>
+  </nav>
+  <div class="detail-header">
+    <div class="header-titles">
+      <h1 class="page-title">{{ projectTitle }}</h1>
+      <p class="page-subtitle" [class.error-subtitle]="!(isLoading$ | async) && !(tasks$ | async)?.length && (error$ | async)">
+        <ng-container *ngIf="!(isLoading$ | async) && !(tasks$ | async)?.length && (error$ | async); else normalSubtitle">
+          GET /todos/user/{{ userId }} · request failed
+        </ng-container>
+        <ng-template #normalSubtitle>
+          {{ (pagination$ | async)?.total || 0 }} tasks total
+        </ng-template>
+      </p>
+    </div>
+    <div class="header-actions" *ngIf="!((error$ | async) && !(tasks$ | async)?.length)">
+      <button class="btn btn-primary" (click)="openAddTaskModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Task
+      </button>
+    </div>
+  </div>
+  <ng-container *ngIf="error$ | async as errorMsg">
+    <app-error-alert
+      *ngIf="(tasks$ | async)?.length"
+      [isPageLevel]="false"
+      [errorMessage]="errorMsg"
+      (dismiss)="clearError()"
+      (retry)="retryFetch()">
+    </app-error-alert>
+  </ng-container>
+  <div class="ledger-card table-card" [class.is-loading]="(isLoading$ | async) && !(tasks$ | async)?.length">
+    <div *ngIf="isLoading$ | async" class="loading-overlay">
+      <app-loading-spinner message="Fetching project tasks from server..."></app-loading-spinner>
+    </div>
+    <div *ngIf="!(isLoading$ | async) && !(tasks$ | async)?.length && (error$ | async) as errorMsg">
+      <app-error-alert
+        [isPageLevel]="true"
+        title="Couldn't load tasks"
+        errorMessage="Something went wrong while fetching tasks from the server. Check your connection and try again."
+        [debugEndpoint]="'Error 500 · GET /todos/user/' + userId + '?limit=6&skip=0'"
+        (retry)="retryFetch()">
+      </app-error-alert>
+    </div>
+    <div *ngIf="!(isLoading$ | async) && !(error$ | async) && (tasks$ | async)?.length === 0">
+      <app-empty-state
+        title="No tasks yet"
+        subtitle="This project doesn't have any tasks. Add the first one to get the ball rolling."
+        actionText="Add your first task"
+        (actionClick)="openAddTaskModal()">
+      </app-empty-state>
+    </div>
+    <div *ngIf="(tasks$ | async)?.length" class="table-container">
+      <div class="table-header-row">
+        <div class="th th-checkbox"></div>
+        <div class="th th-task">TASK</div>
+        <div class="th th-priority">PRIORITY</div>
+        <div class="th th-date">DUE DATE</div>
+        <div class="th th-actions">ACTIONS</div>
+      </div>
+      <div class="table-body">
+        <app-task-card
+          *ngFor="let task of tasks$ | async; trackBy: trackByTaskId"
+          [task]="task"
+          (toggleComplete)="onToggleComplete($event)"
+          (edit)="onEditTask($event)"
+          (delete)="onDeletePrompt($event)">
+        </app-task-card>
+      </div>
+      <ng-container *ngIf="pagination$ | async as pag">
+        <app-pagination
+          [total]="pag.total"
+          [limit]="pag.limit"
+          [skip]="pag.skip"
+          [page]="pag.page"
+          [totalPages]="pag.totalPages"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </ng-container>
+    </div>
+  </div>
+  <app-task-form
+    *ngIf="isAddTaskModalOpen"
+    [userId]="userId"
+    [taskToEdit]="taskToEdit"
+    [isSubmitting]="isCreatingTask"
+    (taskCreated)="onTaskCreated($event)"
+    (taskUpdated)="onTaskUpdated($event)"
+    (cancel)="closeAddTaskModal()">
+  </app-task-form>
+  <app-confirmation-modal
+    [isOpen]="isDeleteModalOpen"
+    title="Delete Task"
+    [message]="deleteConfirmMessage"
+    confirmText="Delete"
+    cancelText="Cancel"
+    [isDestructive]="true"
+    (confirm)="onConfirmDelete()"
+    (cancel)="closeDeleteModal()">
+  </app-confirmation-modal>
+</div>
