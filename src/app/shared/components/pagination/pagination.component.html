@@ -1,0 +1,31 @@
+<div class="pagination-wrapper" *ngIf="total > 0">
+  <div class="range-info">
+    Showing {{ fromItem }}-{{ toItem }} of {{ total }}
+  </div>
+  <div class="page-controls">
+    <button
+      type="button"
+      class="page-btn nav-btn"
+      [disabled]="isFirstPage"
+      (click)="onPageClick(page - 1)"
+      aria-label="Previous page">
+      Prev
+    </button>
+    <button
+      type="button"
+      *ngFor="let p of pages"
+      class="page-btn num-btn"
+      [class.active]="p === page"
+      (click)="onPageClick(p)">
+      {{ p }}
+    </button>
+    <button
+      type="button"
+      class="page-btn nav-btn"
+      [disabled]="isLastPage"
+      (click)="onPageClick(page + 1)"
+      aria-label="Next page">
+      Next
+    </button>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+<div class="spinner-wrapper" [class.inline]="inline">
+  <div class="spinner" [ngClass]="'size-' + size"></div>
+  <span *ngIf="message" class="spinner-message">{{ message }}</span>
+</div>
+

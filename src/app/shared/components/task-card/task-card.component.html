@@ -1,0 +1,55 @@
+<div class="task-row" [class.completed]="task.completed" [class.updating]="task.isUpdating">
+  <div class="col-checkbox">
+    <button
+      type="button"
+      class="custom-checkbox"
+      [class.checked]="task.completed"
+      [disabled]="task.isUpdating"
+      (click)="toggleComplete.emit(task)"
+      [attr.aria-label]="task.completed ? 'Mark task as incomplete' : 'Mark task as complete'">
+      <svg *ngIf="task.completed" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </button>
+  </div>
+  <div class="col-title">
+    <span class="todo-text" [class.done-strike]="task.completed">
+      {{ task.todo }}
+    </span>
+    <span *ngIf="task.isLocal" class="local-pill" title="Created locally in this session">New</span>
+  </div>
+  <div class="col-priority">
+    <app-badge [label]="task.priority" type="priority"></app-badge>
+  </div>
+  <div class="col-date">
+    <span class="date-text" [class.overdue]="task.isOverdue">
+      {{ task.formattedDueDate || task.dueDate }}
+      <span *ngIf="task.isOverdue" class="overdue-tag">· overdue</span>
+    </span>
+  </div>
+  <div class="col-actions">
+    <button
+      type="button"
+      class="icon-action-btn edit-btn"
+      [disabled]="task.isUpdating"
+      (click)="edit.emit(task)"
+      title="Edit task"
+      aria-label="Edit task">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="icon-action-btn delete-btn"
+      [disabled]="task.isUpdating"
+      (click)="delete.emit(task)"
+      title="Delete task"
+      aria-label="Delete task">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+    </button>
+  </div>
+</div>

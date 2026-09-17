@@ -1,0 +1,20 @@
+<div class="empty-state-container">
+  <div class="icon-circle">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+      <polyline points="9 14 11 16 15 12"></polyline>
+    </svg>
+  </div>
+  <h3 class="empty-title">{{ title || 'No tasks yet' }}</h3>
+  <p class="empty-subtitle">{{ subtitle || "This project doesn't have any tasks. Add the first one to get the ball rolling." }}</p>
+
+  <button *ngIf="actionText" type="button" class="btn btn-primary" (click)="actionClick.emit()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    {{ actionText }}
+  </button>
+</div>
+

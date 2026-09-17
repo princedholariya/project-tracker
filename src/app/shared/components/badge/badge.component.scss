@@ -1,0 +1,98 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge-type-status {
+  border-radius: 999px;
+
+  &.badge-completed {
+    background-color: var(--status-completed-bg);
+    color: var(--status-completed-text);
+    .badge-dot { background-color: var(--status-completed-dot); }
+  }
+
+  &.badge-inprogress {
+    background-color: var(--status-inprogress-bg);
+    color: var(--status-inprogress-text);
+    .badge-dot { background-color: var(--status-inprogress-dot); }
+  }
+
+  &.badge-notstarted {
+    background-color: var(--status-notstarted-bg);
+    color: var(--status-notstarted-text);
+    .badge-dot { background-color: var(--status-notstarted-dot); }
+  }
+}
+
+.badge-type-priority {
+  background-color: #f1f5f9;
+  color: #334155;
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  font-weight: 500;
+  font-size: 12px;
+
+  &.badge-high {
+    .badge-dot { background-color: #ef4444; }
+  }
+
+  &.badge-medium {
+    .badge-dot { background-color: #f59e0b; }
+  }
+
+  &.badge-low {
+    .badge-dot { background-color: #64748b; }
+  }
+}
+
+.badge-completed:not(.badge-type-priority) {
+  background-color: var(--status-completed-bg);
+  color: var(--status-completed-text);
+  .badge-dot { background-color: var(--status-completed-dot); }
+}
+
+.badge-inprogress:not(.badge-type-priority) {
+  background-color: var(--status-inprogress-bg);
+  color: var(--status-inprogress-text);
+  .badge-dot { background-color: var(--status-inprogress-dot); }
+}
+
+.badge-notstarted:not(.badge-type-priority) {
+  background-color: var(--status-notstarted-bg);
+  color: var(--status-notstarted-text);
+  .badge-dot { background-color: var(--status-notstarted-dot); }
+}
+
+.badge-high:not(.badge-type-priority) {
+  background-color: var(--priority-high-bg);
+  color: var(--priority-high-text);
+  .badge-dot { background-color: var(--priority-high-dot); }
+}
+
+.badge-medium:not(.badge-type-priority) {
+  background-color: var(--priority-medium-bg);
+  color: var(--priority-medium-text);
+  .badge-dot { background-color: var(--priority-medium-dot); }
+}
+
+.badge-low:not(.badge-type-priority) {
+  background-color: var(--priority-low-bg);
+  color: var(--priority-low-text);
+  .badge-dot { background-color: var(--priority-low-dot); }
+}
+
